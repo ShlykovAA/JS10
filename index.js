@@ -1,135 +1,188 @@
 console.log("Hello!!!");
 
-// Calculate length of other side aa + bb = c*c
-// Find c
-// pythagorean(a, b);
-// pythagorean(5, 12);
-// 13
+//Return total days count
+//getDaysInYear(year);
+//getDaysInYear(2021);
+// 365
+//getDaysInYear(2020);
+// 366
 
-function pythagor (a,b) {
-  return Math.sqrt(a * a + b * b);
+const getDaysInYear = (year) => {
+  let startDate = new Date(0);
+  const newDate = new Date(startDate.setFullYear(year))
+  const yearTime = startDate.setFullYear(year+1) - newDate;
+  const days = yearTime / 86400000;
+  return days
 }
 
-console.log(pythagor(5, 12))
+console.log(getDaysInYear(2021));
+console.log(getDaysInYear(2020));
 
-// Show number in money format
-// +- sign should be present
-// Separate thousands with ,
-//formatMoney(num);
-//formatMoney(1232323);
-//'+ 1,232,323.00'
-//formatMoney(-23.2132);
-//'- 23.21'
+//Return day number from date
+//getDayNumber(date);
+//getDayNumber("2023-01-12");
+// 12
+//getDayNumber("2023-02-26");
+// 57
 
-const formatMoney = (num) => {
-  const sign = num > 0 ? "+" : num < 0 ? "-" : "";
-  const mathNum = Math.abs(num);
-  const twoNumber = mathNum.toFixed(2);
-  const [int, dec = "00"] = twoNumber.split(".");
-  let count = 0;
-  const arrNum = int.split("").reduceRight((acc,item,index)=>{
-    if (count === 2 && index !== 0) {
-      acc.push(item, ",")
-      count = 0;
-    } else {
-      acc.push(item);
-      count++
-    }
-    return acc;
-  },[]);
-  const afterReduce = arrNum.reverse().join("")
-
-return `${sign} ${afterReduce}.${dec}`
+const getDayNumber = (date) => {
+  const startDate = new Date(date);
+  const firstDayInYear = new Date(startDate);
+  firstDayInYear.setMonth(0);
+  firstDayInYear.setDate(1);
+  const dayNumber = ((startDate - firstDayInYear) / 86400000) + 1;
+  return dayNumber
 }
 
-console.log(formatMoney(1232323))
+console.log(getDayNumber("2023-01-12"));
+console.log(getDayNumber("2023-02-26"));
 
-//Format number in spaces
+// Return quarter number from date
+// I quarter: Jan - Mar
+// II quarter: Apr - Jun
+// III quarter: Jul - Sep
+// IV quarter: Oct - Dec
+// getQuarters(date);
+// getQuarters("2023-02-26");
+// Feb 26 is I quarter
 
-function formatNumber (num) {
-  let parts = num.toFixed(3).split(".");
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-  if (parts[1] === "000") {
-    return parts[0];
+const getQuarters = (date) => {
+  const startDate = new Date(date);
+  const monthList = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const month = monthList[startDate.getMonth()];
+  const dayOfDate = startDate.getDate();
+  const quarterlist = {
+    'Jan':"I quarter",
+    'Feb':"I quarter",
+    'Mar':"I quarter",
+    'Apr':"II quarter",
+    'May':"II quarter",
+    'Jun':"II quarter",
+    'Jul':"III quarter",
+    'Aug':"III quarter",
+    'Sep':"III quarter",
+    'Oct':"IV quarter",
+    'Nov':"IV quarter",
+    'Dec':"IV quarter"
+  };
+  const quart = quarterlist[month];
+  return `${month} ${dayOfDate} is ${quart}`;
+}
+
+console.log(getQuarters("2023-02-26"))
+
+// Write a function to calculate date diff
+// Return value should be a formated string
+// If diff is less then hour use minutes format If diff is less then day use hour and minute format
+// If diff is less then month use days format If diff is less then year use moth format Everything else can be in years format
+// calcDateDiff(startDate, endDate);
+// calcDateDiff("2023-02-26 14:00", "2023-02-26 14:20");
+// 20 minutes
+//calcDateDiff("2023-02-26 14:00", "2023-02-26 15:30");
+// 1 hours 30 minutes
+//calcDateDiff("2023-02-26 14:00", "2023-02-28 15:30");
+// 2 days
+//calcDateDiff("2023-02-26 14:00", "2023-05-28 15:30");
+// 3 months
+//calcDateDiff("2023-02-26 14:00", "2025-05-28 15:30");
+// 2 years
+
+const calcDateDiff = (startDate, endDate) => {
+  const firstDate = new Date(startDate);
+  const secondDate = new Date(endDate);
+  const difference = secondDate - firstDate;
+  if (difference > 31536000000) {
+    return `${Math.trunc(difference / 31536000000)} years`
+  } else if (difference > 2592000000) {
+    return `${Math.trunc(difference / 2592000000)} months`
+  } else if (difference > 86400000) {
+    return `${Math.trunc(difference / 86400000)} days`
   } else {
-    return parts.join(".");
-  }
-  
-}
-
-console.log(formatNumber(1232323))
-console.log(formatNumber(1223.65378))
-
-//Write a password generator with length n
-
-function passwordGenerator (num) {
-  const charset = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^`abcdefghijklmnopqrstuvwxyz";
-  let retVal = "";
-for (let i = 0, n = charset.length; i < num; ++i) {
-  retVal += charset.charAt(Math.floor(Math.random() * n));
-}
-return retVal;
-}
-
-console.log(passwordGenerator(8))
-
-//Given 2 numbers. Calculate their percentage with n precision after dot
-//50 is 25% of 200
-//secondNum * 100% / firstNum
-
-const calc = (firstNum, secondNum, precision) => {
-  const percent = (secondNum * 100) / firstNum;
-  return percent.toFixed(precision);
-}
-
-console.log(calc(200,50,0));
-console.log(calc(200,0.14,1));
-
-//User enters a number
-//Get it's integer part and decimal
-
-const splitNumber = (num) => {
-  const [int, dec] = num.toString().split(".");
-  const objResult = {int: int}
-  if (dec !== undefined){
-    objResult.decimal = dec
-  } else {
-    objResult.decimal = "0"
-  }
-  return objResult
-}
-
-console.log(splitNumber(2));
-console.log(splitNumber(2.34));
-
-//Check if given number is a prime number
-//Prime numbers are numbers that is divisible without a remainder only by itself and by 1
-//Should return boolean
-
-const isPrime = (num) => {
-  for(let i = 2, s = Math.sqrt(num); i <= s; i++) {
-    if(num % i === 0) return false;
-}
-return num > 1;
-}
-
-console.log(isPrime(4));
-console.log(isPrime(5));
-
-//An armstrong number is a number which equal to the sum of the cubes of its individual digits.
-//153 = 1*1*1 + 5*5*5 + 3*3*3 153 = 1 + 125 + 27 153 = 153
-
-function isArmstrong(num) {
-    const digits = (num + '').split('');
-    const sum = digits.reduce((acc, item) => {
-     acc = acc + Math.pow(item, digits.length)
-      return acc
-    }, 0);
-    if (sum == num){
-      return true;
+    let minutes = difference / 60000;
+    if (minutes >= 60) {
+      let hours = Math.trunc(minutes / 60)
+      let rest = (minutes - (hours*60));
+      return `${hours} hours ${rest} minutes`
     } else {
-      return false;
+      return `${minutes} minutes`
     }
-  
+  }
 }
-console.log(isArmstrong(153));
+
+console.log(calcDateDiff("2023-02-26 14:00", "2025-05-28 15:30"));
+console.log(calcDateDiff("2023-02-26 14:00", "2023-05-28 15:30"));
+console.log(calcDateDiff("2023-02-26 14:00", "2023-02-28 15:30"));
+console.log(calcDateDiff("2023-02-26 14:00", "2023-02-26 15:30"));
+console.log(calcDateDiff("2023-02-26 14:00", "2023-02-26 14:20"));
+
+// Create map from array of objects
+// Key should be id from object
+// Please add more input data
+//createMap(arr);
+//createMap([
+//   { id: 1, value: 1, date: "2022-02-15" },
+//   { id: 2, value: 1242, date: "2023-02-15" },
+//   { id: 3, value: 3342, date: "2021-02-15" },
+// ]);
+
+const arrOfObj = [
+  { id: 1, value: 1, date: "2022-02-15" },
+  { id: 2, value: 1242, date: "2023-02-15" },
+  { id: 3, value: 3342, date: "2021-02-15" },
+  { id: 4, value: 5472, date: "2020-01-16" },
+  { id: 5, value: 8191, date: "2022-04-22" },
+  { id: 6, value: 12648, date: "2023-03-04" }
+];
+const map1 = new Map();
+
+for (let i = 0; i< arrOfObj.length; i++) {
+  map1.set(arrOfObj[i].id,arrOfObj[i]);
+}
+
+console.log(map1);
+
+// Create a cache for calcDateDiff
+//cacheCalcDateDiff(startDate, endDate);
+
+const map2 = new Map();
+const newCalcDateDiff = (startDate, endDate) => {
+  const cacheInfo = `${startDate} ${endDate}`;
+  let answer;
+ if (map2.has(cacheInfo)) {
+  answer = map2.get(cacheInfo);
+  return answer;
+ } else {
+  const firstDate = new Date(startDate);
+  const secondDate = new Date(endDate);
+  const difference = secondDate - firstDate;
+  if (difference > 31536000000) {
+    answer = `${Math.trunc(difference / 31536000000)} years`;
+    map2.set(cacheInfo, answer);
+  } else if (difference > 2592000000) {
+    answer = `${Math.trunc(difference / 2592000000)} months`;
+    map2.set(cacheInfo, answer);
+  } else if (difference > 86400000) {
+    answer = `${Math.trunc(difference / 86400000)} days`;
+    map2.set(cacheInfo, answer);
+  } else {
+    let minutes = difference / 60000;
+    if (minutes >= 60) {
+      let hours = Math.trunc(minutes / 60);
+      let rest = (minutes - (hours*60));
+      answer = `${hours} hours ${rest} minutes`;
+      map2.set(cacheInfo, answer);
+    } else {
+      answer = `${minutes} minutes`;
+      map2.set(cacheInfo, answer);
+    }
+  }
+  return answer;
+ }
+}
+
+console.log(newCalcDateDiff("2023-02-26 14:00", "2025-05-28 15:30"));
+console.log(newCalcDateDiff("2023-02-26 14:00", "2023-05-28 15:30"));
+console.log(newCalcDateDiff("2023-02-26 14:00", "2023-02-28 15:30"));
+console.log(newCalcDateDiff("2023-02-26 14:00", "2023-02-26 15:30"));
+console.log(newCalcDateDiff("2023-02-26 14:00", "2023-02-26 14:20"));
+console.log(map2);
