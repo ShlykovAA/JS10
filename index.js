@@ -1,196 +1,135 @@
 console.log("Hello!!!");
 
-//Capitalize every word in array
+// Calculate length of other side aa + bb = c*c
+// Find c
+// pythagorean(a, b);
+// pythagorean(5, 12);
+// 13
 
-//capitalize("my name is taras");
-// Should return
-//("My Name Is Taras");
-
-const capTask = "my name is taras";
-const arrWords = capTask.split("");
-
-for (let i = 0; i < arrWords.length; i++) {
-  if (arrWords[i] === " ") {
-    arrWords[i + 1] = arrWords[i + 1].toUpperCase();
-  }
+function pythagor (a,b) {
+  return Math.sqrt(a * a + b * b);
 }
 
-arrWords[0] = arrWords[0].toUpperCase();
+console.log(pythagor(5, 12))
 
-console.log(arrWords.join(""));
+// Show number in money format
+// +- sign should be present
+// Separate thousands with ,
+//formatMoney(num);
+//formatMoney(1232323);
+//'+ 1,232,323.00'
+//formatMoney(-23.2132);
+//'- 23.21'
 
-//Truncate text if it's length is bigger then maxlength and add '...' at the end.
-//Resulted str with dots have to be equal to maxlength
+const formatMoney = (num) => {
+  const sign = num > 0 ? "+" : num < 0 ? "-" : "";
+  const mathNum = Math.abs(num);
+  const twoNumber = mathNum.toFixed(2);
+  const [int, dec = "00"] = twoNumber.split(".");
+  let count = 0;
+  const arrNum = int.split("").reduceRight((acc,item,index)=>{
+    if (count === 2 && index !== 0) {
+      acc.push(item, ",")
+      count = 0;
+    } else {
+      acc.push(item);
+      count++
+    }
+    return acc;
+  },[]);
+  const afterReduce = arrNum.reverse().join("")
 
-//truncate("Lorem ipsum dolor sit amet, consectetur", 14);
-// Lorem ipsum...
+return `${sign} ${afterReduce}.${dec}`
+}
 
-//truncate("Lorem ipsum dolor sit amet, consectetur", 255);
-// Lorem ipsum dolor sit amet, consectetur
+console.log(formatMoney(1232323))
 
-const cutText = "Lorem ipsum dolor sit amet, consectetur";
+//Format number in spaces
 
-function smallText(text) {
-  if (text.length > 14) {
-    return text.slice(0, 11).padEnd(14, ".");
+function formatNumber (num) {
+  let parts = num.toFixed(3).split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  if (parts[1] === "000") {
+    return parts[0];
   } else {
-    return text;
+    return parts.join(".");
   }
+  
 }
 
-function largeText(text) {
-  if (text.length > 255) {
-    return text.slice(0, 252).padEnd(255, ".");
+console.log(formatNumber(1232323))
+console.log(formatNumber(1223.65378))
+
+//Write a password generator with length n
+
+function passwordGenerator (num) {
+  const charset = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^`abcdefghijklmnopqrstuvwxyz";
+  let retVal = "";
+for (let i = 0, n = charset.length; i < num; ++i) {
+  retVal += charset.charAt(Math.floor(Math.random() * n));
+}
+return retVal;
+}
+
+console.log(passwordGenerator(8))
+
+//Given 2 numbers. Calculate their percentage with n precision after dot
+//50 is 25% of 200
+//secondNum * 100% / firstNum
+
+const calc = (firstNum, secondNum, precision) => {
+  const percent = (secondNum * 100) / firstNum;
+  return percent.toFixed(precision);
+}
+
+console.log(calc(200,50,0));
+console.log(calc(200,0.14,1));
+
+//User enters a number
+//Get it's integer part and decimal
+
+const splitNumber = (num) => {
+  const [int, dec] = num.toString().split(".");
+  const objResult = {int: int}
+  if (dec !== undefined){
+    objResult.decimal = dec
   } else {
-    return text;
+    objResult.decimal = "0"
   }
+  return objResult
 }
 
-console.log(smallText(cutText));
-console.log(largeText(cutText));
+console.log(splitNumber(2));
+console.log(splitNumber(2.34));
 
-//Return arr of numbers with values that are in range from 'from' param and to 'to' param
-//filterRange(arr, from, to);
+//Check if given number is a prime number
+//Prime numbers are numbers that is divisible without a remainder only by itself and by 1
+//Should return boolean
 
-//const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-//filterRange(arr, 3, 7);
-// 3,4,5,6,7
-
-const arrForFilter = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-function filterRange(arr, from, to) {
-    return arr.slice(from-1,to)
+const isPrime = (num) => {
+  for(let i = 2, s = Math.sqrt(num); i <= s; i++) {
+    if(num % i === 0) return false;
+}
+return num > 1;
 }
 
-console.log(filterRange(arrForFilter,3,7));
+console.log(isPrime(4));
+console.log(isPrime(5));
 
-//Sort arr from least to biggest
+//An armstrong number is a number which equal to the sum of the cubes of its individual digits.
+//153 = 1*1*1 + 5*5*5 + 3*3*3 153 = 1 + 125 + 27 153 = 153
 
-//const arr = [324, 32423, -3242, 544, 0, 23, -454, 22, 4];
-//sortArr(arr);
-// -3242, -454, 0, 4, 22, 23, 324, 544, 32423
-
-const arrSort = [324, 32423, -3242, 544, 0, 23, -454, 22, 4];
-
-function sortFunc (arr) {
-    return arr.sort((a,b)=>{
-        return a-b;
-    })
+function isArmstrong(num) {
+    const digits = (num + '').split('');
+    const sum = digits.reduce((acc, item) => {
+     acc = acc + Math.pow(item, digits.length)
+      return acc
+    }, 0);
+    if (sum == num){
+      return true;
+    } else {
+      return false;
+    }
+  
 }
-
-console.log(sortFunc(arrSort))
-
-//Sort arr of strings from shortest to longest
-
-//const arr = ["4534", "a", "bb", "sdfds", "", " ", "r4rdv-"];
-//sortArr(arr);
-// '', ' ', 'a', 'bb', '4534', 'sdfds', 'r4rdv-'
-
-const arrStringsSort = ["4534", "a", "bb", "sdfds", "", " ", "r4rdv-"];
-
-function sortStringsFunc (arr) {
-    return arr.sort((a,b)=>{
-        return a.length - b.length;
-        })
-}
-
-console.log(sortStringsFunc(arrStringsSort))
-
-//Calculate average age of users older then 17 and younger then 55
-
-const arrUser = [
-    { name: "John", age: 25 },
-    { name: "Pete", age: 30 },
-    { name: "Mary", age: 29 },
-    { name: "Taras", age: 25 },
-    { name: "Kate", age: 74 },
-    { name: "Chris", age: 14 },
-    { name: "Alan", age: 5 },
-    { name: "Boris", age: 55 },
-    { name: "Elizabeth", age: 48 },
-  ];
-let ageCount = 0;
-
-  const averageAge = arrUser.reduce((acc,item)=>{
-    if (item.age >= 17 && item.age <= 55) {
-        acc += item.age;
-        ageCount++;
-    } return acc;
-  },0) / ageCount;
-
-  console.log(averageAge.toFixed(2))
-
-// Sort arr by name if 2 elements have same name sort by age
-
-const arrUser2 = [
-    { name: "John", age: 25 },
-    { name: "John", age: 5 },
-    { name: "John", age: 2 },
-    { name: "John", age: 45 },
-    { name: "Pete", age: 30 },
-    { name: "Mary", age: 29 },
-    { name: "Mary", age: 2 },
-    { name: "Taras", age: 25 },
-    { name: "Taras", age: 19 },
-    { name: "Kate", age: 74 },
-    { name: "Chris", age: 14 },
-    { name: "Alan", age: 5 },
-    { name: "Alan", age: 32 },
-    { name: "Boris", age: 55 },
-    { name: "Elizabeth", age: 48 },
-    { name: "Elizabeth", age: 8 },
-  ];
-
-function sortUserName(arr){
-   return arr.sort((a,b)=>{
-        if (a.name === b.name) {
-            return a.age - b.age;
-        } else {
-            return a.name.charCodeAt(0) - b.name.charCodeAt(0)
-        }
-    })
-}
-
-console.log(sortUserName(arrUser2))
-
-// Find min and max and return obj {min, max}
-// Use reduce method
-//minMaxAge(arr);
-// {min:5, max:74}
-
-const arrMinMax = [
-    { name: "John", age: 25 },
-    { name: "Pete", age: 30 },
-    { name: "Mary", age: 29 },
-    { name: "Taras", age: 25 },
-    { name: "Kate", age: 74 },
-    { name: "Chris", age: 14 },
-    { name: "Alan", age: 5 },
-    { name: "Boris", age: 55 },
-    { name: "Elizabeth", age: 48 },
-  ];
-
-const minMaxObj = {
-    min: arrMinMax.reduce((acc,item)=>{
-        return acc = item.age < acc ? item.age : acc;
-    },Infinity),
-    max: arrMinMax.reduce((acc,item)=>{
-        return acc = item.age > acc ? item.age : acc;
-    },0)
-}
-
-console.log(minMaxObj)
-
-// Save unique values from arr to uniqueArr
-
-const strings = [
-    "Привіт",
-    "Світ",
-    "Привіт",
-    "Світ",
-    "Привіт",
-    "Привіт",
-    "Світ",
-    "Світ",
-    ":-O",
-  ];
+console.log(isArmstrong(153));
