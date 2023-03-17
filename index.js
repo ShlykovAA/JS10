@@ -6,49 +6,70 @@ console.log("Hello!!!");
 // each of which takes a number as an argument and returns
 // the result of the corresponding arithmetic operation on numbers
 
-const objClosure = {
-    initialNumber: 0,
-    saveNumber: 0,
-    add(addNumber){
-        this.initialNumber += addNumber;
-        return this.initialNumber;
-    },
-    subtract(subtractNumber){
-        this.initialNumber -= subtractNumber;
-        return this.initialNumber;
-    },
-    multiply(multiplyNumber){
-        this.initialNumber *= multiplyNumber;
-        return this.initialNumber;
-    },
-    divide(divideNumber){
-        this.initialNumber /= divideNumber;
-        return this.initialNumber;
-    },
-    reset(){
-        this.initialNumber = this.saveNumber;
-    },
-};
-
 const calculate = (initialNumber) => {
-    objClosure.initialNumber = initialNumber;
-    objClosure.saveNumber = initialNumber
-    return objClosure;
+    let changeNumber = initialNumber;
+    const saveInitialNumber = initialNumber;
+    return {
+        add(addNumber){
+            changeNumber += addNumber;
+            return changeNumber;
+        },
+        subtract(subtractNumber){
+            changeNumber -= subtractNumber;
+            return changeNumber;
+        },
+        multiply(multiplyNumber){
+            changeNumber *= multiplyNumber;
+            return changeNumber;
+        },
+        divide(divideNumber){
+            changeNumber /= divideNumber;
+            return changeNumber;
+        },
+        reset(){
+            changeNumber = saveInitialNumber;
+        },
+    };
 };
 
 const calculator = calculate(5);
 console.log(calculator.add(5));
-console.log(calculator.subtract(3));
-console.log(calculator.multiply(2));
+// 10
 
 
 
 //Decorator
 
-// У мене не вдалося виконати це завдання. 
-// Коли я вже здався, я підглянув у вас код, то виявилося, що я не до кінця зрозумів завдання, яке потрібно виконати. 
-// У вас прив'язка до об'єкта була в самій відповіді, я думав його редагувати не можна.
-// Усі мої спроби прив'язати об'єкт усередині декоратора провалилися.
+const obj = {
+    num: 1,
+    sum(num) {
+      return this.num + num;
+    },
+};
+
+const cachesDecorator = (func) => {
+    const map = new Map();
+  return function (num) {
+    if (!map.has(num)) {
+      const result = func.call(this, num);
+      map.set(num, result);
+    }
+    return map.get(num);
+  };
+}
+
+function sum (num) {
+    return this.num + num;
+  };
+
+const decoratedSum = cachesDecorator(sum);
+console.log(decoratedSum.call(obj, 2));
+console.log(decoratedSum.call(obj, 2));
+  
+const decoratedSum2 = cachesDecorator(obj.sum);
+console.log(decoratedSum.call(obj, 3));
+console.log(decoratedSum.call(obj, 3));
+console.log(decoratedSum.call(obj, 33));
 
 
 
