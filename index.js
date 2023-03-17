@@ -39,28 +39,25 @@ const anagrams = [
 ];
 
 const unique = (arr) => {
-  let x;
-  let y;
-  let z;
-  let litters = new Set();
-  let uniqueAnagrams = [];
-
+  let splitedWordFromArr;
+  let sortedLetters;
+  let connectedLetters;
+  const litters = new Set();
+  const uniqueAnagrams = [];
   for (let i = 0; i < arr.length; i++) {
-    x = arr[i].split('');
-    y = x.sort();
-    z = y.join("");
-
-    if (!litters.has(z)) {
-      litters.add(z);
+    splitedWordFromArr = arr[i].split('');
+    sortedLetters = splitedWordFromArr.sort();
+    connectedLetters = sortedLetters.join("");
+    if (!litters.has(connectedLetters)) {
+      litters.add(connectedLetters);
       uniqueAnagrams.push(arr[i]);
     }
-
   }
   return uniqueAnagrams;
-
 };
 
 console.log(unique(anagrams));
+
 
 
 //Getter and setter
@@ -76,16 +73,16 @@ const user = {
   get userInfo(){
     return `${this.firstName} ${this.lastName} is ${this.age}`
   },
-  set userInfo(a){
-    if (typeof(a) === 'string') {
-      let arrWords = a.split(" ");
+  set userInfo(stringOrObject){
+    if (typeof(stringOrObject) === 'string') {
+      const arrWords = stringOrObject.split(" ");
       this.firstName = arrWords[0];
       this.lastName = arrWords[1];
       this.age = +arrWords[2];
-    } else if (typeof(a) === 'object') {
-      this.firstName = a.firstName;
-      this.lastName = a.lastName;
-      this.age = a.age;
+    } else if (typeof(stringOrObject) === 'object') {
+      this.firstName = stringOrObject.firstName;
+      this.lastName = stringOrObject.lastName;
+      this.age = stringOrObject.age;
     }
   },
 };
@@ -97,6 +94,7 @@ user.userInfo;
 user.userInfo = { firstName: "Kate", lastName: "Karp", age: 22 };
 user.userInfo;
 // "Kate Karp is 22"
+
 
 
 //Create arr method
@@ -114,7 +112,7 @@ const obj = {
 };
 
 const createArr = function (){
-  let arrFromTo = [];
+  const arrFromTo = [];
   for (let i = this.from; i <= this.to; i++){
     arrFromTo.push(i);
   };
@@ -129,6 +127,7 @@ const bindedSolution = createArr.bind(obj);
 
 // Sol 3
 const callSolut = createArr.call(obj)
+
 
 
 //Constructor Function
@@ -156,27 +155,24 @@ function Car(model, color, age, speed, gasTank, started) {
   this.speed = speed;
   this.gasTank = gasTank;
   this.started = started;
-  function startEngine (){
+  this.startEngine = function (){
     if (this.gasTank > 0){
       this.started = true;
     }
     return this;
   }
-  this.startEngine = startEngine;
-  function drive (){
+  this.drive = function (){
     if (this.started === true && this.gasTank > 0){
       this.speed = +this.speed + 30;
     }
     return this;
   }
-  this.drive = drive;
-  function stop (){
+  this.stop = function (){
     this.speed = 0;
     this.started = false;
     return this;
   }
-  this.stop = stop;
-  function speedUp (speedUpArg){
+  this.speedUp = function (speedUpArg){
     this.speed = +this.speed + +speedUpArg;
     if(this.speed > 200){
       this.speed = 200;
@@ -191,8 +187,7 @@ function Car(model, color, age, speed, gasTank, started) {
     }
     return this;
   }
-  this.speedUp = speedUp;
-  function slowDown (speedDownArg){
+  this.slowDown = function (speedDownArg){
     this.speed = +this.speed - +speedDownArg;
     if (this.speed < 0){
       this.speed = 0;
@@ -207,12 +202,10 @@ function Car(model, color, age, speed, gasTank, started) {
     }
     return this;
   }
-  this.slowDown = slowDown;
-  function addGas (addGasArg){
+  this.addGas = function (addGasArg){
     this.gasTank = +this.gasTank + +addGasArg;
     return this;
   }
-  this.addGas = addGas;
 }
 
 const myCar = new Car("Reno", "White", 10, 0, 20, false);
