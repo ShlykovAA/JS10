@@ -1,87 +1,135 @@
 console.log("Hello!!!");
 
-//Closure
-// Create a calculate() function that takes an initial number as an argument
-// and returns methods add(), subtract(), multiply(), divide() and reset()
-// each of which takes a number as an argument and returns
-// the result of the corresponding arithmetic operation on numbers
+//Prototype inheritance
 
-const calculate = (initialNumber) => {
-    let changeNumber = initialNumber;
-    const saveInitialNumber = initialNumber;
-    return {
-        add(addNumber){
-            changeNumber += addNumber;
-            return changeNumber;
-        },
-        subtract(subtractNumber){
-            changeNumber -= subtractNumber;
-            return changeNumber;
-        },
-        multiply(multiplyNumber){
-            changeNumber *= multiplyNumber;
-            return changeNumber;
-        },
-        divide(divideNumber){
-            changeNumber /= divideNumber;
-            return changeNumber;
-        },
-        reset(){
-            changeNumber = saveInitialNumber;
-        },
-    };
+// Create a prototype chain Inherit from university obj with universityName and dean properties
+// Create faculty obj with facultyName and groups arr properties and method enlistStudent into groups
+// Group can contain only 12 students
+
+const university = {
+    universityName: "Polytechnic",
+    dean: "Vladimir Vladimirov",
 };
-
-const calculator = calculate(5);
-console.log(calculator.add(5));
-// 10
-
-
-
-//Decorator
-
-const obj = {
-    num: 1,
-    sum(num) {
-      return this.num + num;
+  
+const faculty = {
+    __proto__: university,
+    facultyName: "psychology",
+    groups: [],
+    enlistStudent(student) {
+        if (this.groups.length < 12){
+        this.groups.push(student);
+        return `New student ${student} added to the group`;
+        } else {
+            return "Group is full";
+        }
     },
 };
 
-const cachesDecorator = (func) => {
-    const map = new Map();
-  return function (num) {
-    if (!map.has(num)) {
-      const result = func.call(this, num);
-      map.set(num, result);
-    }
-    return map.get(num);
-  };
+faculty.universityName;
+// Polytechnic
+  
+faculty.enlistStudent("Taras");
+faculty.enlistStudent("Tolya");
+faculty.groups;
+// [['Taras']]
+
+
+
+//Prototype constructor
+// Create a basic Shape that has color property and a getArea() method.
+// Create two sub objects, Rectangle and Circle, that inherit the properties and methods of the Shape.
+// The Rectangle class must have width and height properties, and the getArea() method must return the area of the rectangle.
+// The Circle class must have a radius property, and the getArea() method must return the area of the circle.
+
+function Shape(color) {
+    this.color = color;
+    this.getArea = function(){
+        return "This is getArea from Shape"
+    };
+}
+  
+function Rectangle(color, width, height) {
+    Shape.call(this,color);
+    this.width = width;
+    this.height = height;
+    this.getArea = function (){
+        return width * height;
+    };
+}
+  
+function Circle(color, radius) {
+    Shape.call(this,color);
+    this.radius = radius;
+    this.getArea = function (){
+        return Math.PI * radius ** 2;
+    };
 }
 
-function sum (num) {
-    return this.num + num;
-  };
-
-const decoratedSum = cachesDecorator(sum);
-console.log(decoratedSum.call(obj, 2));
-console.log(decoratedSum.call(obj, 2));
-  
-const decoratedSum2 = cachesDecorator(obj.sum);
-console.log(decoratedSum.call(obj, 3));
-console.log(decoratedSum.call(obj, 3));
-console.log(decoratedSum.call(obj, 33));
-
-
-
-//Factorial recursion (optional)
-//Count factorial by using recursion
-
-const factorial = (initialNumber) => {
-    if(initialNumber === 1) {
-        return 1
-    }
-    return initialNumber * factorial(initialNumber-1);
+Rectangle.prototype = Shape.prototype;
+Rectangle.prototype.constructor = Rectangle;
+Rectangle.prototype.getArea = function (){
+    return width * height;
 };
+
+Circle.prototype = Shape.prototype;
+Circle.prototype.constructor = Circle;
+Circle.prototype.getArea = function() {
+    return Math.PI * (this.radius ** 2);
+}
+
+const rectangularBlack = new Rectangle("Black",4,6);
+const circleRed = new Circle("Red",8);
+
+
+
+// Fibonacci recursion
+// Create a function that prints last number from sequence
+// Start from 1
+// Try with big numbers (100, 200)
+
+const start = new Date();
+
+const fibonacci = (n) => {
+    return n <= 1 ? n : fibonacci(n - 1) + fibonacci(n - 2);
+  };
   
-console.log(factorial(5));
-// 120
+console.log(fibonacci(7));
+// 13
+
+const end = new Date();
+const timeForCode = (end - start) / 1000;
+
+console.log(`Тайминг: ${Math.round(timeForCode)} секунды`);
+
+
+
+// Fibonacci recursion with cache (Optional)
+// Create a decorator for fibonacci function and cache result
+// Please create new fibonacci func that uses cache from decorator and stores every result
+// Try with big numbers (100, 200)
+
+const map = new Map();
+
+const fibonacciWithCache = (n, cache) => {
+    if (!map.has(n)){
+       if(n <= 1){
+        cache = n;
+       } else {
+        cache = fibonacciWithCache(n-1, cache) + fibonacciWithCache(n-2,cache);
+       }
+        map.set(n, cache);
+        return cache;
+    } else {
+        return map.get(n);
+    }
+};
+
+const cacheDecorator = (func) => {
+    return function (n){
+        return fibonacciWithCache(n);
+    }
+};
+
+const decoratedFib = cacheDecorator();
+
+console.log(decoratedFib(200));
