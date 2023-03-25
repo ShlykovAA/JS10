@@ -1,135 +1,125 @@
 console.log("Hello!!!");
 
-//Prototype inheritance
+// Create class Vehicle
+// Initialize class with properties power, gasTank and mass in tones Calculate max speed by formula 0.84 * power / mass
+// Create method getMaxSpeed that returns maxSpeed
+// Calculate gas usage per km by formula Math.round(maxSpeed / power * 100)
+// Create method getGasUsage that returns gasUsage 
+// Create method startEngine that sets property started to true Create method stopEngine that sets property started to false Create method drive. This method receives 2 arguments speed and distance in km
+// You cannot drive if started is false
+// You cannot set speed more then maxSpeed and less then 0
+// Update gas property corresponding to gasUsage Formula to calculate gas level is distance * gasUsage / 100
+// Create method addGas adds gas to car by arg
+// Argument must be bigger then zero
+// You cannot pour more gas then gasTank
+// Create method printInfo that prints in console all available information
 
-// Create a prototype chain Inherit from university obj with universityName and dean properties
-// Create faculty obj with facultyName and groups arr properties and method enlistStudent into groups
-// Group can contain only 12 students
+// Create class Car
+// Car should inherit from Vehicle
+// Initialize Car with additional properties type and maxPassengerCount
+// Examples of type SEDAN, MINIVAN, SPORTS CAR...
+// Update method printInfo that prints in console all available information
 
-const university = {
-    universityName: "Polytechnic",
-    dean: "Vladimir Vladimirov",
-};
-  
-const faculty = {
-    __proto__: university,
-    facultyName: "psychology",
-    groups: [],
-    enlistStudent(student) {
-        if (this.groups.length < 12){
-        this.groups.push(student);
-        return `New student ${student} added to the group`;
+// Create class Bus
+// Bus should inherit from Car Create method updatePassengers that receives argument passengers and updates passengerCount to that number
+// passengerCount cannot be more then maxPassengerCount and less then 0
+// Update method printInfo that prints in console all available information
+
+class Vehicle {
+    constructor(power, gasTank, mass){
+        this.power = power;
+        this.gasTank = gasTank;
+        this.mass = mass;
+        this.tankLevel = this.gasTank;
+    }
+    started = false;
+    speed = 0;
+    maxSpeed(){
+        return 0.84 * this.power / this.mass;
+    }
+    gasUsage(){
+        return Math.round(this.maxSpeed() / this.power * 100);
+    }
+    getMaxSpeed(){
+        return this.maxSpeed();
+    }
+    getGasUsage(){
+        return this.gasUsage();
+    }
+    startEngine(){
+        this.started = true;
+        return this;
+    }
+    stopEngine(){
+        this.started = false;
+        this.speed = 0;
+        return this;
+    }
+    drive(speed, distance){
+        if (this.started === true) {
+            this.speed = speed;
+            if (this.speed > this.maxSpeed()){
+                this.speed = this.maxSpeed();
+            } else if (this.speed < 0){
+                this.speed = 0;
+            }
+            const gasLevel = distance * this.gasUsage() / 100;
+            if (this.tankLevel - gasLevel < 0) {
+                const notEnoughGas = gasLevel - this.tankLevel;
+                this.tankLevel = 0;
+                return `Not enough ${notEnoughGas} gasoline, please use the gas station (addGas method) on the way.`
+            } else {
+                this.tankLevel = this.tankLevel - gasLevel;
+                return this;
+            }
         } else {
-            return "Group is full";
+            return "Engine not running";
         }
-    },
-};
-
-faculty.universityName;
-// Polytechnic
-  
-faculty.enlistStudent("Taras");
-faculty.enlistStudent("Tolya");
-faculty.groups;
-// [['Taras']]
-
-
-
-//Prototype constructor
-// Create a basic Shape that has color property and a getArea() method.
-// Create two sub objects, Rectangle and Circle, that inherit the properties and methods of the Shape.
-// The Rectangle class must have width and height properties, and the getArea() method must return the area of the rectangle.
-// The Circle class must have a radius property, and the getArea() method must return the area of the circle.
-
-function Shape(color) {
-    this.color = color;
-    this.getArea = function(){
-        return "This is getArea from Shape"
-    };
-}
-  
-function Rectangle(color, width, height) {
-    Shape.call(this,color);
-    this.width = width;
-    this.height = height;
-    this.getArea = function (){
-        return width * height;
-    };
-}
-  
-function Circle(color, radius) {
-    Shape.call(this,color);
-    this.radius = radius;
-    this.getArea = function (){
-        return Math.PI * radius ** 2;
-    };
-}
-
-Rectangle.prototype = Shape.prototype;
-Rectangle.prototype.constructor = Rectangle;
-Rectangle.prototype.getArea = function (){
-    return width * height;
-};
-
-Circle.prototype = Shape.prototype;
-Circle.prototype.constructor = Circle;
-Circle.prototype.getArea = function() {
-    return Math.PI * (this.radius ** 2);
-}
-
-const rectangularBlack = new Rectangle("Black",4,6);
-const circleRed = new Circle("Red",8);
-
-
-
-// Fibonacci recursion
-// Create a function that prints last number from sequence
-// Start from 1
-// Try with big numbers (100, 200)
-
-const start = new Date();
-
-const fibonacci = (n) => {
-    return n <= 1 ? n : fibonacci(n - 1) + fibonacci(n - 2);
-  };
-  
-console.log(fibonacci(7));
-// 13
-
-const end = new Date();
-const timeForCode = (end - start) / 1000;
-
-console.log(`Тайминг: ${Math.round(timeForCode)} секунды`);
-
-
-
-// Fibonacci recursion with cache (Optional)
-// Create a decorator for fibonacci function and cache result
-// Please create new fibonacci func that uses cache from decorator and stores every result
-// Try with big numbers (100, 200)
-
-const map = new Map();
-
-const fibonacciWithCache = (n, cache) => {
-    if (!map.has(n)){
-       if(n <= 1){
-        cache = n;
-       } else {
-        cache = fibonacciWithCache(n-1, cache) + fibonacciWithCache(n-2,cache);
-       }
-        map.set(n, cache);
-        return cache;
-    } else {
-        return map.get(n);
     }
-};
-
-const cacheDecorator = (func) => {
-    return function (n){
-        return fibonacciWithCache(n);
+    addGas(gas){
+        if (gas > 0){
+            this.tankLevel = this.tankLevel + gas;
+            if (this.tankLevel > this.gasTank){
+                this.tankLevel = this.gasTank;
+                return this;
+            }
+            return this;
+        } else {
+            return `You can't add less than zero gas.`;
+        }
     }
-};
+    printInfo(){
+        return `Power and mass: ${this.power}/${this.mass} Gas: ${this.tankLevel}/${this.gasTank} Current/Max speed: ${this.speed}/${this.maxSpeed()}`
+    }
+}
 
-const decoratedFib = cacheDecorator();
+class Car extends Vehicle {
+    constructor(power, gasTank, mass, type, maxPassengerCount){
+        super(power, gasTank, mass);
+        this.type = type;
+        this.maxPassengerCount = maxPassengerCount;
+    }
+    printInfo(){
+        return `Type: ${this.type} Capacity: ${this.maxPassengerCount} Power and mass: ${this.power}/${this.mass} Gas: ${this.tankLevel}/${this.gasTank} Current/Max speed: ${this.speed}/${this.maxSpeed()}`;
+    }
+}
 
-console.log(decoratedFib(200));
+class Bus extends Car {
+    passengerCount = 0;
+    updatePassengers(passengers) {
+        this.passengerCount = passengers;
+        if(this.passengerCount < 0) {
+            this.passengerCount = 0;
+            return "Passengers cannot be less than zero";
+        } else if (this.passengerCount > this.maxPassengerCount) {
+            this.passengerCount = this.maxPassengerCount
+            return `Maximum number of passengers is ${this.maxPassengerCount}`;
+        }
+        return this;
+    }
+    printInfo(){
+        return `Type: ${this.type} | Passenger now/max: ${this.passengerCount}/${this.maxPassengerCount} | Power and mass: ${this.power}/${this.mass} | Gas: ${this.tankLevel}/${this.gasTank} | Current/Max speed: ${this.speed}/${this.maxSpeed()}`
+    }
+}
+
+const man = new Bus(270, 60, 4, "Bus", 44);
