@@ -1,27 +1,14 @@
 console.log("Hello!!!");
 
-const gitData = async () => {
-    const res = await fetch('https://dummyjson.com/products/2');
-    const data = await res.json();
-    const elem = document.getElementById('github-data');
-    if(res.ok) {
-        elem.classList.add('git-ok');
-        elem.innerHTML = JSON.stringify(data);
-    } else {
-        elem.classList.add('git-error');
-        elem.innerHTML = JSON.stringify(data);
-    }
-}
-gitData()
+const btn = document.getElementById('btn');
+const div1 = document.getElementById('testdiv');
+const div2 = document.getElementById('div2');
 
-const divList = document.querySelectorAll('div');
+const onClick = (event) => {
+    console.log(event);
+};
 
-for (let div of divList) {
-    div.classList.add('background-for-div')
-}
+btn.addEventListener('click', onClick);
+div1.addEventListener('click', onClick);
+div2.addEventListener('click', onClick);
 
-setTimeout(()=>{
-    for (let div of divList) {
-        div.classList.add('background-for-div2')
-    } 
-},3000)
