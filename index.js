@@ -1,55 +1,38 @@
 console.log("Hello!!!");
 
-// Fetch github users https://api.github.com/users
+const ulList = document.getElementById("ul_list");
+const allTegLi = document.querySelectorAll("ul li");
+let mouseDown = "";
+let mouseUp = "";
 
-const mainTegForCards = document.getElementById("test_div");
 
-const loadGitHubUsers = async () => {
-  const response = await fetch("https://api.github.com/users");
-  const dataFromGitHub = await response.json();
-  renderCardForUsers(dataFromGitHub);
-}
-
-const renderCardForUsers = (arrayDataUsers) => {
-  for (let i = 0; i < arrayDataUsers.length; i++) {
-    let currentUser = arrayDataUsers[i];
-    const newCardContainer = document.createElement("div");
-    const divForAvatarAndLogin = document.createElement("div");
-    const photo = avatarForCard(currentUser);
-    const login = loginForCard(currentUser);
-    const gitHubAccount = accountUrl(currentUser);
-
-    divForAvatarAndLogin.append(photo);
-    divForAvatarAndLogin.append(login);
-    divForAvatarAndLogin.classList.add("avatar_and_login_container");
-
-    newCardContainer.append(divForAvatarAndLogin);
-    newCardContainer.append(gitHubAccount);
-    newCardContainer.classList.add("card_container");
-
-    mainTegForCards.append(newCardContainer);
+ulList.addEventListener("click", (event) => {
+  if (event.ctrlKey === false && event.shiftKey === false) {
+    clearArea(allTegLi);
+    event.target.classList.add('turn');
+  } else if (event.ctrlKey === true && event.shiftKey === false) {
+    event.target.classList.toggle('turn');
+  } else if (event.ctrlKey === false && event.shiftKey === true) {
+    clearArea(allTegLi);
+    let start = mouseDown < mouseUp ? +mouseDown : +mouseUp;
+    let end =  mouseDown > mouseUp ? +mouseDown : +mouseUp;
+    for (let counter = (start - 1); counter <= (end - 1); counter++) {
+      allTegLi[counter].classList.add('turn');
+    }
   }
-};
+  ulList.classList.remove('turn');
+});
 
-const avatarForCard = (objectUser) => {
-  const newTegForPhoto = document.createElement("img");
-  newTegForPhoto.src = objectUser.avatar_url;
-  newTegForPhoto.classList.add("card_avatar");
-  return newTegForPhoto;
-};
+ulList.addEventListener("mousedown", (event) => {
+  mouseDown = event.target.innerText;
+});
 
-const loginForCard = (objectUser) => {
-  const newTegForLogin = document.createElement("p");
-  newTegForLogin.innerText = objectUser.login;
-  newTegForLogin.classList.add("card_login");
-  return newTegForLogin;
-};
+ulList.addEventListener("mouseup", (event) => {
+  mouseUp = event.target.innerText;
+});
 
-const accountUrl = (objectUser) => {
-  const newTegForUrl = document.createElement("div");
-  newTegForUrl.innerHTML = `<a href="${objectUser.html_url}" target="_blank" class="url_account">${objectUser.html_url}</a>`;
-  newTegForUrl.classList.add("card_url");
-  return newTegForUrl;
+const clearArea = (arrayWithTegLi) => {
+  for (let li of arrayWithTegLi) {
+    li.classList.remove('turn');
+  }
 }
-
-loadGitHubUsers();
